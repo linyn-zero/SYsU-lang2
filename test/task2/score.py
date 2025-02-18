@@ -499,6 +499,24 @@ def check_ast(
     return node_helper
 
 
+# 化简answer.yaml：删除 "range"、"id" 和 "loc" 键等评分无关的键
+keys_to_remove = ["range", "id", "loc", "referencedDecl", "isUsed", "mangledName"]
+
+
+def remove_keys(json_data: Any, keys_to_remove: list) -> Any:
+    """简化 answer.yaml：递归函数来删除json文件中指定的键"""
+
+    if isinstance(json_data, dict):
+        json_data = {
+            key: remove_keys(value, keys_to_remove)
+            for key, value in json_data.items()
+            if key not in keys_to_remove
+        }
+    elif isinstance(json_data, list):
+        json_data = [remove_keys(item, keys_to_remove) for item in json_data]
+    return json_data
+
+
 def score_one(
     cases_helper: CasesHelper, case: CasesHelper.Case
 ) -> ScoreReport.TestEntry:
@@ -541,7 +559,9 @@ def score_one(
             try:
                 NodeHelper.filter_ast(std_answer)
                 with open(cases_helper.of_case_bindir("answer.yaml", case), "w") as f:
-                    f.write(yaml.dump(std_answer))
+                    # 简化 answer.yaml, 删除不需要的 key
+                    simplied_std_answer = remove_keys(std_answer, keys_to_remove)
+                    f.write(yaml.dump(simplied_std_answer))
             except Exception as e:
                 output = "转化为yaml失败"
                 fprint(fp, "转化为yaml失败")
