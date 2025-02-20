@@ -14,10 +14,8 @@ postfixExpression
     ;
 
 unaryExpression
-    :
-    (postfixExpression
+    :   postfixExpression
     |   unaryOperator unaryExpression
-    )
     ;
 
 unaryOperator
@@ -40,11 +38,11 @@ expression
 
 
 declaration
-    :   declarationSpecifiers initDeclaratorList? Semi
+    :   declarationSpecifiers initDeclaratorList Semi
     ;
 
 declarationSpecifiers
-    :   declarationSpecifier+
+    :   declarationSpecifier
     ;
 
 declarationSpecifier
@@ -114,8 +112,7 @@ expressionStatement
 
 
 jumpStatement
-    :   (Return expression?)
-    Semi
+    :   Return expression? Semi
     ;
 
 compilationUnit
