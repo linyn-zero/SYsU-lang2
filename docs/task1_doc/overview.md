@@ -11,8 +11,7 @@ int main(){
     return 3;
 }
 ```
-
-其经过`clang`预处理后，我们可以在`/YatCC/build/test/task0/functional-0/000_main.sysu.c`得到以下内容：
+执行 `task0-answer` 的构建，即预处理源代码，其输出可以在`/YatCC/build/test/task0/functional-0/000_main.sysu.c`找到：
 
 ```cpp
 # 1 "./functional-0/000_main.sysu.c"
@@ -27,7 +26,7 @@ int main(){
 }
 ```
 
-相比源代码，多了一些以`#`开头的行。这些行是`clang`在预处理过程中插入的，称之为**行标记**（Linemarkers）。
+相比源代码，多了一些以`#`开头的行。这些行是编译器在预处理过程中插入的，称之为**行标记**（Linemarkers）。
 
 行标记的基本格式是`# linenum filename flags`，它的含义是**下一行**来自于`filename`文件的第`linenum`行。例如`# 1 "./functional-0/000_main.sysu.c 2"`表示下一行`int main(){`来自于`./functional-0/000_main.sysu.c`文件的第 1 行。
 
@@ -35,7 +34,7 @@ int main(){
 
 ---
 
-用`clang`进一步对预处理后的源代码进行词法分析，其结果如下，该信息可以在`/YatCC/build/test/task1/functional-0/000_main.sysu.c/answer.txt`找到：
+执行 `task1-answer` 的构建，即对预处理后的源代码进行词法分析，其输出可以在`/YatCC/build/test/task1/functional-0/000_main.sysu.c/answer.txt`找到：
 
 ```cpp
 int 'int'  [StartOfLine]  Loc=<./functional-0/000_main.sysu.c:1:1>
@@ -69,7 +68,7 @@ eof ''  Loc=<./functional-0/000_main.sysu.c:3:2>
 
 1. 预处理源代码
 
-   在`PROJECT OUTLINE/YatCC/test/task0`中选择构建`task0-answer`。该操作将自动将所有`YatCC/test/cases/*/*.sysu.c`源代码进行预处理。预处理结果将保存在`YatCC/build/test/task0`文件夹中，作为词法分析器的输入。
+   在 CMake 的 PROJECT OUTLINE 的`/YatCC/test/task0`中选择构建`task0-answer`。该操作将自动将所有`YatCC/test/cases/*/*.sysu.c`源代码进行预处理。预处理结果将保存在`YatCC/build/test/task0`文件夹中，作为词法分析器的输入。
 
    ![build task0](../images/task0answer.png)
 
@@ -77,7 +76,7 @@ eof ''  Loc=<./functional-0/000_main.sysu.c:3:2>
 
    本次实验可以选择使用`flex`或`antlr`实现词法分析器，需要在`/YatCC/config.cmake`中设置`TASK1_WITH`为`"flex"`或`"antlr"`。设置完成后，同学们可以自由编写`YatCC/task/1/flex`或`YatCC/task/1/antlr`中的源代码。
 
-   完成源代码编写后，可以通过`PROJECT OUTLINE/YatCC/test/task1`中选择构建`task1-score`进行实验一的评分。完成所有样例测评后，每个样例的标准输出`answer.txt`、实际输出`output.txt`和评分结果`score.txt`将保存在`YatCC/build/test/task1`文件夹中，同学们可以根据评分结果对比标准输出和实际输出，并进行代码修改。
+   完成源代码编写后，可以通过构建`task1-score`进行实验一的评分。完成所有样例测评后，每个样例的标准输出`answer.txt`、实际输出`output.txt`和评分结果`score.txt`将保存在`YatCC/build/test/task1`文件夹中，同学们可以根据评分结果对比标准输出和实际输出，并进行代码修改。
 
    ![score task1](../images/task1score.png)
 
@@ -85,7 +84,7 @@ eof ''  Loc=<./functional-0/000_main.sysu.c:3:2>
 
 3. 打包提交
 
-   完成实验后，请通过构建`PROJECT OUTLINE/YatCC/task/task1-score`进行实验一源代码打包并提交至测评机进行正式测评，打包结果将保存于`/YatCC/build/task`中。
+   完成实验后，请通过构建`task1-pack`进行实验一源代码打包并提交至测评机进行正式测评，打包结果将保存于`/YatCC/build/task`中。
 
    ![pack task1](../images/task1pack.png)
 
@@ -104,6 +103,6 @@ eof ''  Loc=<./functional-0/000_main.sysu.c:3:2>
 - `/YatCC/config.cmake`：根据个人需要，设置实验一的实现方式`TASK1_WITH`为`"flex"`或`"antlr"`。
 - `/YatCC/task/1/CMakeLists.txt`：根据`TASK1_WITH`选择编译工具为`"flex"`或`"antlr"`，并使用相应工具生成词法分析器`task1`。
 - `/YatCC/test/task1/CMakeLists.txt`：主要包含两个构造目标：
-  - `task1-answer`：调用同文件夹下的`answer.sh`，使用`clang -cc1 -dump-tokens *.sysu.c`指令生成所有测例的标准词法分析结果。
+  - `task1-answer`：调用同文件夹下的`answer.py`，使用`clang -cc1 -dump-tokens *.sysu.c`指令生成所有测例的标准词法分析结果。
   - `task1-score`：调用同文件夹下的`score.py`，将`task1`生成的输出与`clang`生成的标准答案进行比较，最终统计各测例得分。评分时会根据测例权重文件对各测例得分进行加权计算总得分。
     同时，本文件还包含为每个测例创建测试的代码，方便同学们使用断点调试功能（相关用法已在“如何调试代码”介绍，此处不再赘述）。
